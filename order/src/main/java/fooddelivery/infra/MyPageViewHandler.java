@@ -18,17 +18,17 @@ public class MyPageViewHandler {
     private MyPageRepository myPageRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenOrderPlaced_then_CREATE_1 (@Payload OrderPlaced orderPlaced) {
+    public void whenPayAccepted_then_CREATE_1 (@Payload PayAccepted payAccepted) {
         try {
 
-            if (!orderPlaced.validate()) return;
+            if (!payAccepted.validate()) return;
 
             // view 객체 생성
             MyPage myPage = new MyPage();
             // view 객체에 이벤트의 Value 를 set 함
-            myPage.setStatus("주문됨");
-            myPage.setId(orderPlaced.getId());
-            myPage.setOrderId(orderPlaced.getId());
+            myPage.setId(payAccepted.getId());
+            myPage.setOrderId(payAccepted.getId());
+            myPage.setStatus("결제승인됨");
             // view 레파지 토리에 save
             myPageRepository.save(myPage);
 
@@ -39,15 +39,15 @@ public class MyPageViewHandler {
 
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenPayAccepted_then_UPDATE_1(@Payload PayAccepted payAccepted) {
+    public void whenPayCancelled_then_UPDATE_1(@Payload PayCancelled payCancelled) {
         try {
-            if (!payAccepted.validate()) return;
+            if (!payCancelled.validate()) return;
                 // view 객체 조회
 
-                List<MyPage> myPageList = myPageRepository.findByOrderId(payAccepted.getOrderId());
+                List<MyPage> myPageList = myPageRepository.findByOrderId(payCancelled.getOrderId());
                 for(MyPage myPage : myPageList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
-                    myPage.setStatus("결제승인");
+                    myPage.setStatus("결제취소됨");
                 // view 레파지 토리에 save
                 myPageRepository.save(myPage);
                 }
@@ -166,11 +166,11 @@ public class MyPageViewHandler {
     }
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenOrderCancelled_then_DELETE_1(@Payload OrderCancelled orderCancelled) {
+    public void whenPayCancelled_then_DELETE_1(@Payload PayCancelled payCancelled) {
         try {
-            if (!orderCancelled.validate()) return;
+            if (!payCancelled.validate()) return;
             // view 레파지 토리에 삭제 쿼리
-            myPageRepository.deleteByOrderId(orderCancelled.getId());
+            myPageRepository.deleteByOrderId(payCancelled.getId());
         }catch (Exception e){
             e.printStackTrace();
         }
