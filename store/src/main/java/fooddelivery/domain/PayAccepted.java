@@ -14,6 +14,8 @@ public class PayAccepted extends AbstractEvent {
     private Long price;
     private String action;
     private Long foodId;
+    private Integer qty;
+    private String customerId;
 }
 
 

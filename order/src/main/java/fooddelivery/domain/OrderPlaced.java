@@ -1,11 +1,13 @@
 package fooddelivery.domain;
 
+import fooddelivery.domain.*;
 import fooddelivery.infra.AbstractEvent;
-import lombok.Data;
 import java.util.*;
+import lombok.*;
 
 
 @Data
+@ToString
 public class OrderPlaced extends AbstractEvent {
 
     private Long id;
@@ -15,4 +17,11 @@ public class OrderPlaced extends AbstractEvent {
     private String address;
     private String status;
     private Long foodId;
+
+    public OrderPlaced(Order aggregate){
+        super(aggregate);
+    }
+    public OrderPlaced(){
+        super();
+    }
 }

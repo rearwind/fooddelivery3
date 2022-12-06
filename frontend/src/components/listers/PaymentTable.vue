@@ -73,6 +73,7 @@
                     { text: "action", value: "action" },
                     { text: "foodId", value: "foodId" },
                     { text: "qty", value: "qty" },
+                    { text: "customerId", value: "customerId" },
                 ],
             payment : [],
             newValue: {},
@@ -96,6 +97,7 @@
                 'action': '',
                 'foodId': 0,
                 'qty': 0,
+                'customerId': '',
             }
         },
         methods: {

@@ -74,6 +74,7 @@
                 'action': '',
                 'foodId': 0,
                 'qty': 0,
+                'customerId': '',
             }
         },
         methods:{

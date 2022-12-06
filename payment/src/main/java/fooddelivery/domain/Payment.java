@@ -61,6 +61,12 @@ public class Payment  {
     
     
     private Integer qty;
+    
+    
+    
+    
+    
+    private String customerId;
 
     @PostPersist
     public void onPostPersist(){

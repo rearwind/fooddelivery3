@@ -12,6 +12,7 @@ public class Payment {
     private String action;
     private Long foodId;
     private Integer qty;
+    private String customerId;
 }
 
 
