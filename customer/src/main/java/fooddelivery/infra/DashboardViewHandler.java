@@ -18,16 +18,17 @@ public class DashboardViewHandler {
     private DashboardRepository dashboardRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenPayAccepted_then_CREATE_1 (@Payload PayAccepted payAccepted) {
+    public void whenOrderPlaced_then_CREATE_1 (@Payload OrderPlaced orderPlaced) {
         try {
 
-            if (!payAccepted.validate()) return;
+            if (!orderPlaced.validate()) return;
 
             // view 객체 생성
             Dashboard dashboard = new Dashboard();
             // view 객체에 이벤트의 Value 를 set 함
-            dashboard.setOrderId(payAccepted.getOrderId());
-            dashboard.setStatus("결제승인됨");
+            dashboard.setId(orderPlaced.getId());
+            dashboard.setOrderId(orderPlaced.getId());
+            dashboard.setStatus("주문됨");
             // view 레파지 토리에 save
             dashboardRepository.save(dashboard);
 
@@ -101,6 +102,24 @@ public class DashboardViewHandler {
                 for(Dashboard dashboard : dashboardList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
                     dashboard.setStatus("요리완료됨");
+                // view 레파지 토리에 save
+                dashboardRepository.save(dashboard);
+                }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenPayAccepted_then_UPDATE_5(@Payload PayAccepted payAccepted) {
+        try {
+            if (!payAccepted.validate()) return;
+                // view 객체 조회
+
+                List<Dashboard> dashboardList = dashboardRepository.findByOrderId(payAccepted.getOrderId());
+                for(Dashboard dashboard : dashboardList){
+                    // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    dashboard.setStatus("결제승인됨");
                 // view 레파지 토리에 save
                 dashboardRepository.save(dashboard);
                 }

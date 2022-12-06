@@ -18,17 +18,17 @@ public class MyPageViewHandler {
     private MyPageRepository myPageRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whenPayAccepted_then_CREATE_1 (@Payload PayAccepted payAccepted) {
+    public void whenOrderPlaced_then_CREATE_1 (@Payload OrderPlaced orderPlaced) {
         try {
 
-            if (!payAccepted.validate()) return;
+            if (!orderPlaced.validate()) return;
 
             // view 객체 생성
             MyPage myPage = new MyPage();
             // view 객체에 이벤트의 Value 를 set 함
-            myPage.setId(payAccepted.getId());
-            myPage.setOrderId(payAccepted.getId());
-            myPage.setStatus("결제승인됨");
+            myPage.setId(orderPlaced.getId());
+            myPage.setOrderId(orderPlaced.getId());
+            myPage.setStatus("주문됨");
             // view 레파지 토리에 save
             myPageRepository.save(myPage);
 
@@ -156,6 +156,24 @@ public class MyPageViewHandler {
                 for(MyPage myPage : myPageList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
                     myPage.setStatus("주문거절됨");
+                // view 레파지 토리에 save
+                myPageRepository.save(myPage);
+                }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenPayAccepted_then_UPDATE_8(@Payload PayAccepted payAccepted) {
+        try {
+            if (!payAccepted.validate()) return;
+                // view 객체 조회
+
+                List<MyPage> myPageList = myPageRepository.findByOrderId(payAccepted.getOrderId());
+                for(MyPage myPage : myPageList){
+                    // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    myPage.setStatus("결제승인됨");
                 // view 레파지 토리에 save
                 myPageRepository.save(myPage);
                 }
